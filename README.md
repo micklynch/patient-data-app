@@ -1,4 +1,6 @@
-# patient-data-app
+# The Patient Data App
+
+A Progressive Web App created to view data from the Patient Data Network
 
 ## Project setup
 ```
