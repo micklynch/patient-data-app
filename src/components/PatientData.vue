@@ -30,6 +30,11 @@ export default {
       .get(uri+'ImagingStudy/'+imagingStudyId+'?_format=json&_pretty=true')
       .then(response => (this.imagingStudy = response))
       .catch(error => console.log(error));
+  },
+  methods: {
+    share: function(index) {
+      
+    }
   }
 }
 </script>
