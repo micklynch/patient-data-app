@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     share: function(index) {
-      
+      console.log(index);
     }
   }
 }
