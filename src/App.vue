@@ -46,6 +46,10 @@ body {
 }
 
 .usercard {
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  margin: auto;
+  max-width: 500px;
   background: rgba(255, 255, 255, 0.493);
   box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
