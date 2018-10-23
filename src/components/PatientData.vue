@@ -3,17 +3,33 @@
     <h1>{{msg}}</h1>
     <ul>
   <li v-for="(patientdataitem, index) in patientdataitems" :key="index">
-    <div class="container">
-    <div class="datacard">
-      <div class="data-details">
-        <h4>{{patientdataitem.data.resourceType}} - {{patientdataitem.data.id}} - {{patientdataitem.data.meta.lastUpdated}} </h4>
-        {{patientdataitem.data}} 
+    <div class="md-card">
+      <div class="md-card-content">
+         <md-card-header>
+        <md-card-header-text>
+        <div class="md-title">{{patientdataitem.data.resourceType}} </div> 
+        </md-card-header-text></md-card-header>
+          <p><b>Last Updated:</b> {{patientdataitem.data.meta.lastUpdated}} </p>
+          <p> <b>Item ID:</b> {{patientdataitem.data.id}}</p>
+          <!-- <p>{{patientdataitem.data}} </p> -->
+          <p><b>Shared With: </b>Dr. Murphy, Hospital ABC, +1 more... </p>
+          <md-card-actions>
+            <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true"><md-icon>share</md-icon></md-button>
+          </md-card-actions>
       </div>
-    </div>
     </div>
     </li>
     </ul>
+
+  <md-dialog :md-active.sync="showDialog">
+      <md-dialog-title>Preferences</md-dialog-title>
+      <p>This is a dialog for hopefully sharing some data</p>
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+      </md-dialog-actions>
+  </md-dialog>
   </div> 
+
 </template>
 
 <script>
@@ -24,6 +40,7 @@ export default {
   },
   data() {
     return {
+      showDialog: false,
       patientdataitems: null
     };
   },
@@ -56,25 +73,38 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.container {
-  padding: 8px;
-}
-.datacard {
+
+.md-card {
+  padding: 2rem 2rem 2rem 2rem;
   background: rgba(255, 255, 255, 0.493);
-  box-shadow: 0 0.1875rem 1.5rem rgba(0, 0, 0, 0.2);
   border-radius: 0.375rem;
   color: #4d3939;
-  align-items: center;
+  align-items: left;
+  max-width: 520px;
+  margin: 8px;
+  display: inline-block;
+  vertical-align: top;
 }
 
-.data-details {
+.md-card-content {
   text-align: left;
   padding: 1rem;
+}
+
+.md-dialog {
+  padding: 2rem 2rem 2rem 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.375rem;
+}
+
+.md-button {
+  align-self: right;
 }
 
 h3 {
   margin: 40px 0 0;
 }
+
 ul {
   list-style-type: none;
   padding: 0;

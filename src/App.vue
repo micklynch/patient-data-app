@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="Logo" src="./assets/logo.png">
     <div class = "usercard">
       <div class = "user-details">
     <h2>Name: {{patient.data.name[0].given[0]+" "+patient.data.name[0].family}}</h2>
@@ -8,16 +8,19 @@
     </div>
     </div>
     <PatientData msg="My Data"/>
+    <Footer />
   </div>
 </template>
 
 <script>
-import PatientData from "./components/PatientData.vue";
+import PatientData from "./components/PatientData.vue"
+import Footer from './components/Footer.vue'
 
 export default {
   name: "app",
   components: {
-    PatientData
+    PatientData,
+    Footer
   },
   data() {
     return {
