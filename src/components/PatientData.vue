@@ -7,14 +7,14 @@
       <div class="md-card-content">
          <md-card-header>
         <md-card-header-text>
-        <div class="md-title">{{patientdataitem.data.resourceType}} </div> 
+        <div class="md-title">{{patientdataitem.fhir.data.resourceType}} </div> 
         </md-card-header-text></md-card-header>
-          <p><b>Last Updated:</b> {{patientdataitem.data.meta.lastUpdated}} </p>
-          <p> <b>Item ID:</b> {{patientdataitem.data.id}}</p>
-          <!-- <p>{{patientdataitem.data}} </p> -->
-          <p><b>Shared With: </b>Dr. Murphy, Hospital ABC, +1 more... </p>
+          <p><b>Last Updated:</b> {{patientdataitem.fhir.data.meta.lastUpdated}} </p>
+          <p> <b>Item ID:</b> {{patientdataitem.fhir.data.id}}</p>
+           <!--p>{{patientdataitem.fhir.data}} </p> -->
+          <p v-if="patientdataitem.shares"><b>Shared With: </b>{{patientdataitem.shares.join(", ")}} </p>
           <md-card-actions>
-            <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true"><md-icon>share</md-icon></md-button>
+            <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true; selectedItem=index"><md-icon>share</md-icon></md-button>
           </md-card-actions>
       </div>
     </div>
@@ -22,10 +22,27 @@
     </ul>
 
   <md-dialog :md-active.sync="showDialog">
-      <md-dialog-title>Preferences</md-dialog-title>
-      <p>This is a dialog for hopefully sharing some data</p>
+      <md-dialog-title>Sharing your Data</md-dialog-title>
+      <form>
+        <md-card>
+          <md-card-content>
+            <md-field>
+              <label>First name</label>
+              <md-input v-model="form.drfirstname"></md-input>              
+            </md-field>
+            <md-field>
+              <label>Last name</label>
+              <md-input v-model="form.drlastname"></md-input>
+            </md-field>
+            <md-field>
+              <label>Email</label>
+              <md-input v-model="form.dremail" type="email"></md-input>
+            </md-field>
+          </md-card-content>
+        </md-card>
+      </form>
       <md-dialog-actions>
-        <md-button class="md-primary" @click="showDialog = false">Close</md-button>
+        <md-button class="md-primary" @click="showDialog = false; share(selectedItem)">Close</md-button>
       </md-dialog-actions>
   </md-dialog>
   </div> 
@@ -33,6 +50,8 @@
 </template>
 
 <script>
+import connectFhir from '../../src/IO/connectFhir'
+
 export default {
   name: "PatientData",
   props: {
@@ -41,31 +60,28 @@ export default {
   data() {
     return {
       showDialog: false,
-      patientdataitems: null
+      patientdataitems: null,
+      selectedItem: null,
+      form: {
+        drfirstname: null,
+        drlastname: null,
+        dremail:null
+      },
     };
   },
-  mounted() {
-    let uri = "http://hapi.fhir.org/baseDstu3/";
-    let links = [
-      "Appointment/257258",
-      "MedicationStatement/272393",
-      "Procedure/FJF0000212311901F5",
-      "Medication/FJF0000212311901C1"
-    ];
-    console.log(links);
-    this.patientdataitems = [];
-
-    links.forEach(link => {
-      // Get data
-      this.axios
-        .get(uri + link + "?_format=json&_pretty=true")
-        .then(response => this.patientdataitems.push(response))
-        .catch(error => console.log(error));
-    });
+  async mounted() {
+    this.patientdataitems = await connectFhir.getFhirData();
   },
   methods: {
     share: function(index) {
-      console.log(index);
+      if (this.patientdataitems[index].shares) {
+        this.patientdataitems[index].shares.push(this.form.drfirstname+" "+this.form.drlastname);
+      } else {
+        this.patientdataitems[index].shares = [this.form.drfirstname+" "+this.form.drlastname];
+      }
+      this.form.drfirstname = null
+      this.form.drlastname = null
+      this.form.dremail = null
     }
   }
 };
@@ -73,9 +89,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
 .md-card {
-  padding: 2rem 2rem 2rem 2rem;
+  /*padding: 2rem 2rem 2rem 2rem;*/
   background: rgba(255, 255, 255, 0.493);
   border-radius: 0.375rem;
   color: #4d3939;
@@ -88,7 +103,6 @@ export default {
 
 .md-card-content {
   text-align: left;
-  padding: 1rem;
 }
 
 .md-dialog {
