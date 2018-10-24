@@ -1,6 +1,6 @@
 {
-  "name": "my-pwa",
-  "short_name": "my-pwa",
+  "name": "patient-data-app",
+  "short_name": "patient-data-app",
   "icons": [
     {
       "src": "/img/icons/logo.png",
