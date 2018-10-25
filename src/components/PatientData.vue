@@ -70,7 +70,16 @@ export default {
     };
   },
   async mounted() {
-    this.patientdataitems = await connectFhir.getFhirData();
+    if (localStorage.getItem('patientDataAppLocalStorage')) {
+      this.patientdataitems = JSON.parse(localStorage.getItem('patientDataAppLocalStorage'));
+    } else {
+      this.patientdataitems = await connectFhir.getFhirData();
+    }
+  },
+  created: function() {
+    this.patientdataitems = JSON.parse(
+      localStorage.getItem("patientDataAppLocalStorage") || "[]"
+    );
   },
   methods: {
     share: function(index) {
@@ -79,9 +88,23 @@ export default {
       } else {
         this.patientdataitems[index].shares = [this.form.drfirstname+" "+this.form.drlastname];
       }
+      this.updateLocalStorage()
       this.form.drfirstname = null
       this.form.drlastname = null
       this.form.dremail = null
+    },
+      //...
+    updateLocalStorage: function() {
+      localStorage.setItem("patientDataAppLocalStorage", JSON.stringify(this.patientdataitems));
+    }
+  },
+  // local storage https://medium.com/@vince_umo_34593/vue-js-101-todo-pwa-tutorial-ea96eb4e64b1
+  watch: {
+    patientdataitems: {
+      handler() {
+        this.updateTodoLocalStorage();
+      },
+      deep: true
     }
   }
 };
