@@ -18,7 +18,7 @@ import ConnectPage from './ConnectPage.vue'
 import connectFhir from '../IO/connectFhir'
 
 export default {
-  name: "Patient",
+  name: "PatientView",
   components: {
     PatientData,
     ConnectPage
@@ -28,8 +28,31 @@ export default {
       patient: null
     };
   },
+  created: () => {
+    this.patient = JSON.parse(
+      localStorage.getItem("patientAppLocalStorage") || "[]"
+    );
+  },
   async mounted() {
     this.patient = await connectFhir.getFhirPatient()
+    this.updateLocalStorage()
+  },
+  methods: {
+    //...
+    updateLocalStorage: function() {
+      localStorage.setItem(
+        "patientAppLocalStorage",
+        JSON.stringify(this.patient)
+      );
+    }
+  },
+  watch: {
+    patient: {
+      handler() {
+        this.updateLocalStorage();
+      },
+      deep: true
+    }
   }
 };
 </script>
