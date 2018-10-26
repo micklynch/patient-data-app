@@ -1,7 +1,23 @@
 <template>
   <div class="patient-data">
     <h1>{{msg}}</h1>
-    <ul>
+
+    <!-- Single card for adding new data -->
+    <div class="md-card">
+      <div class="md-card-content">
+          <md-card-header>
+        <md-card-header-text>
+        <div class="md-title">Get your data</div> 
+        </md-card-header-text></md-card-header>
+          <p>Connect to sites to find your data</p>
+          <md-card-actions>
+            <router-link to="/connectpage"><md-button class="md-icon-button md-raised md-accent"><md-icon>add</md-icon></md-button></router-link>
+          </md-card-actions>
+      </div>
+    </div>
+
+    <!-- Here is the patient data -->
+  <ul>
   <li v-for="(patientdataitem, index) in patientdataitems" :key="index">
     <div class="md-card">
       <div class="md-card-content">
@@ -11,7 +27,6 @@
         </md-card-header-text></md-card-header>
           <p><b>Last Updated:</b> {{patientdataitem.fhir.data.meta.lastUpdated}} </p>
           <p> <b>Item ID:</b> {{patientdataitem.fhir.data.id}}</p>
-           <!--p>{{patientdataitem.fhir.data}} </p> -->
           <p v-if="patientdataitem.shares"><b>Shared With: </b>{{patientdataitem.shares.join(", ")}} </p>
           <md-card-actions>
             <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true; selectedItem=index"><md-icon>share</md-icon></md-button>
@@ -19,8 +34,8 @@
       </div>
     </div>
     </li>
-    </ul>
-
+  </ul>
+  <!-- Dialog for sharing -->
   <md-dialog :md-active.sync="showDialog">
       <md-dialog-title>Sharing your Data</md-dialog-title>
       <form>
@@ -45,12 +60,11 @@
         <md-button class="md-primary" @click="showDialog = false; share(selectedItem)">Close</md-button>
       </md-dialog-actions>
   </md-dialog>
-  </div> 
-
+  </div>
 </template>
 
 <script>
-import connectFhir from '../../src/IO/connectFhir'
+import connectFhir from "../../src/IO/connectFhir";
 
 export default {
   name: "PatientData",
@@ -65,13 +79,15 @@ export default {
       form: {
         drfirstname: null,
         drlastname: null,
-        dremail:null
-      },
+        dremail: null
+      }
     };
   },
   async mounted() {
-    if (localStorage.getItem('patientDataAppLocalStorage')) {
-      this.patientdataitems = JSON.parse(localStorage.getItem('patientDataAppLocalStorage'));
+    if (localStorage.getItem("patientDataAppLocalStorage")) {
+      this.patientdataitems = JSON.parse(
+        localStorage.getItem("patientDataAppLocalStorage")
+      );
     } else {
       this.patientdataitems = await connectFhir.getFhirData();
     }
@@ -84,25 +100,35 @@ export default {
   methods: {
     share: function(index) {
       if (this.patientdataitems[index].shares) {
-        this.patientdataitems[index].shares.push(this.form.drfirstname+" "+this.form.drlastname);
+        this.patientdataitems[index].shares.push(
+          this.form.drfirstname + " " + this.form.drlastname
+        );
       } else {
-        this.patientdataitems[index].shares = [this.form.drfirstname+" "+this.form.drlastname];
+        this.patientdataitems[index].shares = [
+          this.form.drfirstname + " " + this.form.drlastname
+        ];
       }
-      this.updateLocalStorage()
-      this.form.drfirstname = null
-      this.form.drlastname = null
-      this.form.dremail = null
+
+      // update local storage
+      this.updateLocalStorage();
+      
+      // reset form data
+      this.form.drfirstname = null;
+      this.form.drlastname = null;
+      this.form.dremail = null;
     },
-      //...
+    //...
     updateLocalStorage: function() {
-      localStorage.setItem("patientDataAppLocalStorage", JSON.stringify(this.patientdataitems));
+      localStorage.setItem(
+        "patientDataAppLocalStorage",
+        JSON.stringify(this.patientdataitems)
+      );
     }
   },
-  // local storage https://medium.com/@vince_umo_34593/vue-js-101-todo-pwa-tutorial-ea96eb4e64b1
   watch: {
     patientdataitems: {
       handler() {
-        this.updateTodoLocalStorage();
+        this.updateLocalStorage();
       },
       deep: true
     }
@@ -113,13 +139,11 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .md-card {
-  /*padding: 2rem 2rem 2rem 2rem;*/
   background: rgba(255, 255, 255, 0.493);
   border-radius: 0.375rem;
   color: #4d3939;
   align-items: left;
   max-width: 520px;
-  margin: 8px;
   display: inline-block;
   vertical-align: top;
 }
