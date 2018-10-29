@@ -26,8 +26,8 @@
         <div class="md-title">{{patientdataitem.fhir.data.resourceType}} </div> 
         </md-card-header-text></md-card-header>
           <p><b>Last Updated:</b> {{patientdataitem.fhir.data.meta.lastUpdated}} </p>
-          <p> <b>Item ID:</b> {{patientdataitem.fhir.data.id}}</p>
-          <p v-if="patientdataitem.shares"><b>Shared With: </b>{{patientdataitem.shares.join(", ")}} </p>
+          <p><b>Item ID:</b> {{patientdataitem.fhir.data.id}}</p>
+          <p v-if="patientdataitem.shares"><b>Shared With: </b><span v-for="(share, index) in patientdataitem.shares" v-bind:key="index">{{share.fullName}}<span v-if="index+1 < patientdataitem.shares.length">, </span></span></p>
           <md-card-actions>
             <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true; selectedItem=index"><md-icon>share</md-icon></md-button>
           </md-card-actions>
@@ -79,6 +79,9 @@ export default {
       form: {
         drfirstname: null,
         drlastname: null,
+        fullName() {
+          return `${this.drfirstname} ${this.drlastname}`
+        },
         dremail: null
       }
     };
@@ -99,20 +102,22 @@ export default {
   },
   methods: {
     share: function(index) {
+      let newShare = {}
+      newShare.firstname = this.form.drfirstname;
+      newShare.lastname = this.form.drlastname;
+      newShare.email = this.form.dremail;
+      newShare.fullName = this.form.fullName();
       if (this.patientdataitems[index].shares) {
         this.patientdataitems[index].shares.push(
-          this.form.drfirstname + " " + this.form.drlastname
+          newShare
         );
       } else {
         this.patientdataitems[index].shares = [
-          this.form.drfirstname + " " + this.form.drlastname
+          newShare
         ];
       }
-
       // update local storage
       this.updateLocalStorage();
-      
-      // reset form data
       this.form.drfirstname = null;
       this.form.drlastname = null;
       this.form.dremail = null;
