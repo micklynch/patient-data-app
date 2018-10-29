@@ -3,8 +3,8 @@
     <div class="logo"><img alt="Logo" src="../assets/logo.png"></div>
     <div class = "md-card">
       <div class = "md-card-content">
-        <h2>Name: {{patient.data.name[0].given[0]+" "+patient.data.name[0].family}}</h2>
-        <h3>Medical Record Number: {{patient.data.identifier[0].value}}</h3>
+        <h2 v-if="patient">Name: {{patient.data.name[0].given[0]+" "+patient.data.name[0].family}}</h2>
+        <h3 v-if="patient">Medical Record Number: {{patient.data.identifier[0].value}}</h3>
       </div>
     </div>
     <PatientData msg="My Data"/>
@@ -28,7 +28,7 @@ export default {
       patient: null
     };
   },
-  created: () => {
+  created: function() {
     this.patient = JSON.parse(
       localStorage.getItem("patientAppLocalStorage") || "[]"
     );

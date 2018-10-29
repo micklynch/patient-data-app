@@ -16,10 +16,6 @@ export default {
   components: {
     PatientView,
     Footer
-  },
-  data() {
-    return {
-    };
   }
 };
 </script>
