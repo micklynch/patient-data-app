@@ -102,10 +102,7 @@ export default {
   },
   methods: {
     share: function(index) {
-      let newShare = {}
-      newShare.firstname = this.form.drfirstname;
-      newShare.lastname = this.form.drlastname;
-      newShare.email = this.form.dremail;
+      let newShare = {...this.form}
       newShare.fullName = this.form.fullName();
       if (this.patientdataitems[index].shares) {
         this.patientdataitems[index].shares.push(
