@@ -27,7 +27,14 @@
         </md-card-header-text></md-card-header>
           <p><b>Last Updated:</b> {{patientdataitem.fhir.data.meta.lastUpdated}} </p>
           <p><b>Item ID:</b> {{patientdataitem.fhir.data.id}}</p>
-          <p v-if="patientdataitem.shares"><b>Shared With: </b><span v-for="(share, index) in patientdataitem.shares" v-bind:key="index">{{share.fullName}}<span v-if="index+1 < patientdataitem.shares.length">, </span></span></p>
+          <!-- Check if shared with anyone -->
+          <p v-if="patientdataitem.shares">
+            <b>Shared With: </b>
+            <!-- List the names of the people who you are sharing with -->
+            <span v-for="(share, index) in patientdataitem.shares" v-bind:key="index">{{share.fullName}}
+              <span v-if="index+1 < patientdataitem.shares.length">, </span>
+            </span>
+          </p>
           <md-card-actions>
             <md-button class="md-icon-button md-raised md-accent" @click="showDialog = true; selectedItem=index"><md-icon>share</md-icon></md-button>
           </md-card-actions>
