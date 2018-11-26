@@ -26,3 +26,6 @@ npm run test
 ```
 npm run lint
 ```
+# Screenshot
+
+![screenshot](/resources/screenshot.png)
